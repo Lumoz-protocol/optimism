@@ -134,7 +134,15 @@ contract L1StandardBridge is StandardBridge, ISemver {
     ///                     Data supplied here will not be used to execute any code on L2 and is
     ///                     only emitted as extra data for the convenience of off-chain tooling.
     function depositETH(uint32 _minGasLimit, bytes calldata _extraData) external payable onlyEOA {
-        _initiateETHDeposit(msg.sender, msg.sender, _minGasLimit, _extraData);
+        if (isCustomGasToken()) {
+            require(systemConfig.l1WEthAddress != address(0), "systemConfig.l1WEthAddress is zero address");
+            require(systemConfig.l2WEthAddress != address(0), "systemConfig.l2WEthAddress is zero address");
+            (bool success, ) = systemConfig.l1WEthAddress.call{value: msg.value}("");
+            require(success, "Swap to weth failed");
+            _initiateERC20Deposit(systemConfig.l1WEthAddress, systemConfig.l2WEthAddress, address(this), msg.sender, msg.value, _minGasLimit, _extraData);
+        } else {
+            _initiateETHDeposit(msg.sender, msg.sender, _minGasLimit, _extraData);
+        }
     }
 
     /// @custom:legacy

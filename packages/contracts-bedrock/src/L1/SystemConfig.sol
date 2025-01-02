@@ -123,6 +123,9 @@ contract SystemConfig is OwnableUpgradeable, ISemver, IGasToken {
     ///         Set as internal with a getter so that the struct is returned instead of a tuple.
     IResourceMetering.ResourceConfig internal _resourceConfig;
 
+    bytes32 public constant L1_WETH_ADDRESS_SLOT = bytes32(uint256(keccak256("systemconfig.l1weth")) - 1);
+    bytes32 public constant L2_WETH_ADDRESS_SLOT = bytes32(uint256(keccak256("systemconfig.l2weth")) - 1);
+
     /// @notice Emitted when configuration is updated.
     /// @param version    SystemConfig version.
     /// @param updateType Type of update.
@@ -467,5 +470,21 @@ contract SystemConfig is OwnableUpgradeable, ISemver, IGasToken {
         );
 
         _resourceConfig = _config;
+    }
+
+    function l1WEthAddress() external view returns (address addr_) {
+        addr_ = Storage.getAddress(L1_WETH_ADDRESS_SLOT);
+    }
+
+    function l2WEthAddress() external view returns (address addr_) {
+        addr_ = Storage.getAddress(L2_WETH_ADDRESS_SLOT);
+    }
+
+    function setL1WEthAddress(address _l1WEthAddress) public onlyOwner {
+        Storage.setAddress(L1_WETH_ADDRESS_SLOT, _l1WEthAddress);
+    }
+
+    function setL2WEthAddress(address _l2WEthAddress) public onlyOwner {
+        Storage.setAddress(L2_WETH_ADDRESS_SLOT, _l2WEthAddress);
     }
 }

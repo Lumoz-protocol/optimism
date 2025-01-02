@@ -78,4 +78,9 @@ interface ISystemConfig {
     function transferOwnership(address newOwner) external;
     function unsafeBlockSigner() external view returns (address addr_);
     function version() external pure returns (string memory);
+
+    function l1WEthAddress() external view returns (address addr_);
+    function l2WEthAddress() external view returns (address addr_);
+    function setL1WEthAddress(address _l1WEthAddress) external;
+    function setL2WEthAddress(address _l2WEthAddress) external;
 }
