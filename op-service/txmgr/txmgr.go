@@ -830,6 +830,13 @@ func (m *SimpleTxManager) increaseGasPrice(ctx context.Context, tx *types.Transa
 		callMsg.BlobGasFeeCap = bumpedBlobFee
 		callMsg.BlobHashes = tx.BlobHashes()
 	}
+	m.l.Debug("callMsg",
+		"callMsg.Gas", callMsg.Gas,
+		"callMsg.GasTipCap", callMsg.GasTipCap,
+		"callMsg.GasFeeCap", callMsg.GasFeeCap,
+		"callMsg.BlobGasFeeCap", callMsg.BlobGasFeeCap,
+		"callMsg.BlobHashes", callMsg.BlobHashes,
+	)
 	gas, err := m.backend.EstimateGas(ctx, callMsg)
 	if err != nil {
 		// If this is a transaction resubmission, we sometimes see this outcome because the
@@ -925,6 +932,7 @@ func (m *SimpleTxManager) SuggestGasPriceCaps(ctx context.Context) (*big.Int, *b
 		baseFee = new(big.Int).Set(minBaseFee)
 	}
 
+	m.l.Debug("SuggestGasPriceCaps result", "tip", tip, "baseFee", baseFee, "blobFee", blobFee)
 	return tip, baseFee, blobFee, nil
 }
 
